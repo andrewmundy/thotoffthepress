@@ -15,13 +15,15 @@ export default function Page() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    // Update the theme based on local storage and system preference
-    const storedTheme = window.localStorage.getItem('theme');
-    const prefersDarkMode =
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (storedTheme === 'dark' || (!storedTheme && prefersDarkMode)) {
-      setIsDarkMode(true);
+    if (typeof window !== 'undefined') {
+      // Update the theme based on local storage and system preference
+      const storedTheme = window.localStorage.getItem('theme');
+      const prefersDarkMode =
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (storedTheme === 'dark' || (!storedTheme && prefersDarkMode)) {
+        setIsDarkMode(true);
+      }
     }
   }, []);
 
@@ -67,10 +69,14 @@ export default function Page() {
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark');
-      window.localStorage.setItem('theme', 'dark');
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('theme', 'dark');
+      }
     } else {
       document.body.classList.remove('dark');
-      window.localStorage.setItem('theme', 'light');
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('theme', 'light');
+      }
     }
   }, [isDarkMode]);
 
