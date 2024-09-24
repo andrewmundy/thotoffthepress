@@ -7,12 +7,15 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
 
-  // Uncoment to add domain whitelist
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'www.washingtonpost.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com',
       },
     ],
   },
