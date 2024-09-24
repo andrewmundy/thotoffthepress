@@ -48,9 +48,8 @@ export default function Page() {
             className='article-image'
             src={article?.message?.urlToImage ?? ''}
             alt='Article Image'
-            layout='responsive'
-            width={700}
-            height={475}
+            width={500}
+            height={300}
           />
           <p className='article-time'>{articleDate}</p>
           <p className='article-content'>{article?.message?.article}</p>
