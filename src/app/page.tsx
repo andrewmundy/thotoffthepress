@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 type ArticleType = {
   message: {
@@ -44,13 +43,13 @@ export default function Page() {
         <p className='loading'>Loading...</p>
       ) : (
         <div className='article'>
-          <Image
+          {/* <Image
             className='article-image'
             src={article?.message?.urlToImage ?? ''}
             alt='Article Image'
             width={500}
             height={300}
-          />
+          /> */}
           <p className='article-time'>{articleDate}</p>
           <p className='article-content'>{article?.message?.article}</p>
           <a className='article-url' href={article?.message?.url}>
