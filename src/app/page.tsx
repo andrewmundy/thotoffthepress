@@ -12,12 +12,18 @@ export default function Page() {
   const [article, setArticle] = useState<ArticleType>();
   const [loading, setLoading] = useState<boolean>(true);
   const [showToast, setShowToast] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(
-    () =>
-      window.localStorage.getItem('theme') === 'dark' ||
-      (window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-  );
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Update the theme based on local storage and system preference
+    const storedTheme = window.localStorage.getItem('theme');
+    const prefersDarkMode =
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (storedTheme === 'dark' || (!storedTheme && prefersDarkMode)) {
+      setIsDarkMode(true);
+    }
+  }, []);
 
   const articleDate = article?.message?.publishedAt
     ? new Date(article?.message?.publishedAt).toLocaleString('en-US', {
