@@ -5,12 +5,20 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-sm: 0.875rem;
+  --font-md: 1rem;
+  --font-lg: 1.25rem;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+body.dark {
+  --foreground: var(--background);
+  --background: var(--foreground);
 }
 
 :root {
@@ -128,6 +136,47 @@
   }
 }
 
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading .dot1 {
+  animation: blink 1.5s infinite;
+}
+
+.loading .dot2 {
+  animation: blink 1.5s infinite;
+  animation-delay: 0.5s;
+}
+
+.loading .dot3 {
+  animation: blink 1.5s infinite;
+  animation-delay: 1s;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--foreground);
+  color: var(--background);
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
@@ -143,11 +192,13 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem;
-  font-size: 1.25rem;
   line-height: 1.875rem;
 }
+.article-header {
+  margin: 1rem 1rem 0rem 1rem;
+}
 .article-time {
-  font-size: 0.9rem;
+  font-size: var(--font-sm);
   color: #666;
   align-self: flex-start;
 }
@@ -156,18 +207,34 @@ body {
   height: auto;
 }
 .article-content {
-  margin-top: 1rem;
-  font-size: 1.2rem;
+  font-size: var(--font-lg);
 }
 .article-url {
-  margin-top: 1rem;
-  font-size: 1.2rem;
+  font-size: var(--font-lg);
   color: #0070f3;
-  align-self: flex-start;
 }
 .loading {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+.article-footer {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.article-footer-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.copy-button {
+  border: solid 1px var(--foreground);
+  padding: 0rem 1rem;
+  border-radius: 5px;
 }

@@ -11,6 +11,14 @@ type ArticleType = {
 export default function Page() {
   const [article, setArticle] = useState<ArticleType>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [showToast, setShowToast] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(
+    () =>
+      localStorage.getItem('theme') === 'dark' ||
+      (window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+  );
+
   const articleDate = article?.message?.publishedAt
     ? new Date(article?.message?.publishedAt).toLocaleString('en-US', {
         year: 'numeric',
@@ -22,6 +30,7 @@ export default function Page() {
         hour12: true,
       })
     : null;
+
   useEffect(() => {
     async function fetchArticles() {
       try {
@@ -37,26 +46,58 @@ export default function Page() {
     }
     fetchArticles();
   }, []);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(article?.message?.article ?? '');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
+  };
+
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+  };
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   return (
     <div>
       {loading ? (
-        <p className='loading'>Loading...</p>
+        <p className='loading'>
+          Loading<span className='dot1'>.</span>
+          <span className='dot2'>.</span>
+          <span className='dot3'>.</span>
+        </p>
       ) : (
         <div className='article'>
-          {/* <Image
-            className='article-image'
-            src={article?.message?.urlToImage ?? ''}
-            alt='Article Image'
-            width={500}
-            height={300}
-          /> */}
-          <p className='article-time'>{articleDate}</p>
           <p className='article-content'>{article?.message?.article}</p>
-          <a className='article-url' href={article?.message?.url}>
-            {article?.message?.url}
-          </a>
+          <p className='article-time'>{articleDate}</p>
+          <div className='article-footer'>
+            <a className='article-url' href={article?.message?.url}>
+              View article
+            </a>
+            <div className='article-footer-group'>
+              <button className='copy-button' onClick={handleCopy}>
+                Copy
+              </button>
+              <button
+                className='theme-toggle-button copy-button'
+                onClick={toggleTheme}
+              >
+                {isDarkMode ? '🌞' : '🌜'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
+      {showToast && <div className='toast'>Copied to clipboard</div>}
     </div>
   );
 }
