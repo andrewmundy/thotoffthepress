@@ -56,14 +56,15 @@ export default function Page() {
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
   };
 
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.body.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);
 
