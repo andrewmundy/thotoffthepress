@@ -61,10 +61,10 @@ export default function Page() {
     setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
   };
 
-  const toggleTheme = () => {
-    const newTheme = !isDarkMode;
-    setIsDarkMode(newTheme);
-  };
+  // const toggleTheme = () => {
+  //   const newTheme = !isDarkMode;
+  //   setIsDarkMode(newTheme);
+  // };
 
   useEffect(() => {
     if (isDarkMode) {
@@ -100,12 +100,12 @@ export default function Page() {
               <button className='copy-button' onClick={handleCopy}>
                 Copy
               </button>
-              <button
+              {/* <button
                 className='theme-toggle-button copy-button'
                 onClick={toggleTheme}
               >
                 {isDarkMode ? '🌞' : '🌜'}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
