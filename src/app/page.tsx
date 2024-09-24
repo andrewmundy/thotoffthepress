@@ -14,7 +14,7 @@ export default function Page() {
   const [showToast, setShowToast] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(
     () =>
-      localStorage.getItem('theme') === 'dark' ||
+      window.localStorage.getItem('theme') === 'dark' ||
       (window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches)
   );
@@ -61,10 +61,10 @@ export default function Page() {
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      window.localStorage.setItem('theme', 'dark');
     } else {
       document.body.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      window.localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);
 
