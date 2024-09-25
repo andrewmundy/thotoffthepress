@@ -4,8 +4,10 @@ import OpenAI from 'openai';
 
 const client = await db.connect();
 const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY });
-const instructions = process.env.GPT_PROMPT || '';
-
+const articlePrompt = process.env.GPT_PROMPT || '';
+const titlePrompt = `${
+  process.env.GPT_TITLE_PROMPT || ''
+}. Please keep this title short, max 100 chars.`;
 export async function GET() {
   try {
     const newsArticles = await fetch(
@@ -25,7 +27,7 @@ export async function GET() {
     const gptArticleContent = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        { role: 'system', content: instructions },
+        { role: 'system', content: articlePrompt },
         {
           role: 'user',
           content: newsArticle.content.split('...')[0],
@@ -33,8 +35,19 @@ export async function GET() {
       ],
     });
 
+    const gptArticleTitle = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: titlePrompt },
+        {
+          role: 'user',
+          content: newsArticle.title,
+        },
+      ],
+    });
+
     const final = {
-      title: 'hello',
+      title: gptArticleTitle.choices[0].message.content,
       article: gptArticleContent.choices[0].message.content,
       url: newsArticle.url,
       urlToImage: newsArticle.urlToImage,
@@ -51,7 +64,11 @@ export async function GET() {
         ).toISOString()};
       `;
 
-    if (existingArticles.length === 0) {
+    if (
+      existingArticles.length === 0 ||
+      final.url === 'https://removed.com' ||
+      final.article?.includes("I'm sorry, I can't assist")
+    ) {
       await client.sql`
               INSERT INTO articles (article, url, publishedAt, urlToImage, likes, title)
               VALUES (${article}, ${url}, ${new Date(
@@ -93,6 +110,27 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to add article', details: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { id } = await request.json();
+
+    // Delete the article with the specified id
+    await client.sql`
+      DELETE FROM articles WHERE id = ${id};
+    `;
+
+    return NextResponse.json(
+      { message: 'Article deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
       { status: 500 }
     );
   }
