@@ -64,10 +64,16 @@ export async function GET() {
         ).toISOString()};
       `;
 
+    const { rows: lastArticle } = await client.sql`
+      SELECT * FROM articles
+      ORDER BY id DESC
+      LIMIT 1;
+    `;
+
     if (
-      existingArticles.length === 0 ||
-      final.url === 'https://removed.com' ||
-      final.article?.includes("I'm sorry, I can't assist")
+      existingArticles.length === 0 &&
+      final.url !== 'https://removed.com' &&
+      !final.article?.includes("I'm sorry, I can't assist")
     ) {
       await client.sql`
               INSERT INTO articles (article, url, publishedAt, urlToImage, likes, title)
@@ -78,8 +84,10 @@ export async function GET() {
             `;
       return NextResponse.json({ message: final }, { status: 200 });
     } else {
+      const lastArticleOrFallback =
+        existingArticles.length > 1 ? existingArticles[0] : lastArticle[0];
       return NextResponse.json(
-        { message: existingArticles[0] },
+        { message: lastArticleOrFallback },
         { status: 200 }
       );
     }
