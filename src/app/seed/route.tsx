@@ -1,4 +1,5 @@
 import { db } from '@vercel/postgres';
+import { NextResponse } from 'next/server';
 
 import { articles } from '../lib/placeholder-data';
 
@@ -45,9 +46,9 @@ export async function GET() {
     await seedArticles();
     await client.sql`COMMIT`;
 
-    return Response.json({ message: 'Database seeded successfully' });
+    return NextResponse.json({ message: 'Database seeded successfully' });
   } catch (error) {
     await client.sql`ROLLBACK`;
-    return Response.json({ error }, { status: 500 });
+    return NextResponse.json({ error }, { status: 500 });
   }
 }
