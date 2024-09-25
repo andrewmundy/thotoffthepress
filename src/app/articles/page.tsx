@@ -1,19 +1,45 @@
 import { sql } from '@vercel/postgres';
 import React from 'react';
 
-const Articles: React.FC = async () => {
-  const { rows } = await sql`SELECT * FROM articles`;
+interface Article {
+  id: number;
+  title: string;
+  article: string;
+  url: string;
+  urlToImage: string;
+  publishedAt: string;
+  likes: number;
+}
 
+async function fetchArticles(): Promise<Article[]> {
+  const { rows } = await sql`SELECT * FROM articles`;
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    article: row.article,
+    url: row.url,
+    urlToImage: row.urlToImage ?? '',
+    publishedAt: row.publishedat,
+    likes: row.likes,
+  }));
+}
+
+const Articles: React.FC<{ articles: Article[] }> = ({ articles }) => {
   return (
     <div>
-      {rows.map(({ title, article, id }) => (
+      {articles.map(({ title, article, id }) => (
         <div key={id}>
-          {title}
-          {article}
+          <h2>{title}</h2>
+          <p>{article}</p>
         </div>
       ))}
     </div>
   );
 };
 
-export default Articles;
+const Page = async () => {
+  const articles = await fetchArticles();
+  return <Articles articles={articles} />;
+};
+
+export default Page;
