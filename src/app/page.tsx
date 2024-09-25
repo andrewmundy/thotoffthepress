@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+
 type ArticleType = {
   message: {
     article: string;
@@ -8,6 +9,7 @@ type ArticleType = {
     publishedAt: string;
   };
 };
+
 export default function Page() {
   const [article, setArticle] = useState<ArticleType>();
   const [loading, setLoading] = useState<boolean>(true);

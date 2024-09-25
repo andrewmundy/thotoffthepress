@@ -1,52 +1,99 @@
+import { db } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+const client = await db.connect();
 const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY });
 const instructions = process.env.GPT_PROMPT || '';
-// To handle a GET request to /api
+
 export async function GET() {
   try {
     const newsArticles = await fetch(
       `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.NEWS_API_KEY}`
     ).then((res) => res.json());
-    const article = {
+
+    const newsArticle = {
       title: newsArticles.articles[0].title,
       description: newsArticles.articles[0].description,
       url: newsArticles.articles[0].url,
       urlToImage: newsArticles.articles[0].urlToImage,
       publishedAt: newsArticles.articles[0].publishedAt,
-      content: newsArticles.articles[0].content,
+      content:
+        newsArticles.articles[0].content || newsArticles.articles[0].title,
     };
-    const sentence = `${article.title}. ${article.description}. ${
-      article.content.split('...')[0]
-    }`;
-    const completion = await openai.chat.completions.create({
+
+    const gptArticleContent = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: instructions },
         {
           role: 'user',
-          content: sentence,
+          content: newsArticle.content.split('...')[0],
         },
       ],
     });
+
     const final = {
-      article: completion.choices[0].message.content,
-      url: article.url,
-      urlToImage: article.urlToImage,
-      publishedAt: article.publishedAt,
+      title: 'hello',
+      article: gptArticleContent.choices[0].message.content,
+      url: newsArticle.url,
+      urlToImage: newsArticle.urlToImage,
+      publishedAt: newsArticle.publishedAt,
+      likes: 0,
     };
-    return NextResponse.json({ message: final }, { status: 200 });
+
+    const { title, article, url, publishedAt, urlToImage, likes } = final;
+
+    // Check if an article with the same publishedAt already exists
+    const { rows: existingArticles } = await client.sql`
+        SELECT * FROM articles WHERE publishedAt = ${new Date(
+          publishedAt
+        ).toISOString()};
+      `;
+
+    if (existingArticles.length === 0) {
+      await client.sql`
+              INSERT INTO articles (article, url, publishedAt, urlToImage, likes, title)
+              VALUES (${article}, ${url}, ${new Date(
+        publishedAt
+      ).toISOString()}, ${urlToImage ?? ''}, ${likes}, ${title})
+              ON CONFLICT (id) DO NOTHING;
+            `;
+      return NextResponse.json({ message: final }, { status: 200 });
+    } else {
+      return NextResponse.json(
+        { message: existingArticles[0] },
+        { status: 200 }
+      );
+    }
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch articles or generate completion' },
+      { error: (error as Error).message },
       { status: 500 }
     );
   }
 }
-// To handle a POST request to /api
-export async function POST() {
-  // Do whatever you want
-  return NextResponse.json({ message: 'Hello World' }, { status: 200 });
+
+export async function POST(request: Request) {
+  try {
+    const { id, article, url, publishedAt, urlToImage, likes, title } =
+      await request.json();
+
+    await client.sql`
+      INSERT INTO articles (id, article, url, publishedAt, urlToImage, likes, title)
+      VALUES (${id}, ${article}, ${url}, ${new Date(
+      publishedAt
+    ).toISOString()}, ${urlToImage}, ${likes}, ${title})
+    `;
+
+    return NextResponse.json(
+      { message: 'Article added successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to add article', details: (error as Error).message },
+      { status: 500 }
+    );
+  }
 }
-// Same logic to add a `PATCH`, `DELETE`...
