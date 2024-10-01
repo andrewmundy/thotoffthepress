@@ -2,14 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'src/app/articles/styles.css';
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-xs: 0.75rem;
   --font-sm: 0.875rem;
   --font-md: 1rem;
   --font-lg: 1.25rem;
+  --font-xl: 2rem;
+  --font-family: 'nyt-imperial', georgia, 'times new roman', times, serif;
 }
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -19,7 +24,7 @@
 body.dark {
   --foreground: var(--background);
   --background: var(--foreground);
-}
+} */
 
 :root {
   /* #region  /**=========== Primary Color =========== */
@@ -180,7 +185,7 @@ body.dark {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'nyt-imperial', georgia, 'times new roman', times, serif;
+  font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -191,11 +196,7 @@ body {
   align-items: center;
   max-width: 800px;
   margin: 0 auto;
-  padding: 1rem;
   line-height: 1.875rem;
-}
-.article-header {
-  margin: 1rem 1rem 0rem 1rem;
 }
 .article-time {
   font-size: var(--font-sm);
@@ -206,11 +207,8 @@ body {
   width: 100%;
   height: auto;
 }
-.article-content {
-  font-size: var(--font-lg);
-}
 .article-url {
-  font-size: var(--font-lg);
+  font-size: var(--font-sm);
   color: #0070f3;
 }
 .loading {
@@ -218,23 +216,4 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-}
-
-.article-footer {
-  margin-top: 1rem;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.article-footer-group {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.copy-button {
-  border: solid 1px var(--foreground);
-  padding: 0rem 1rem;
-  border-radius: 5px;
 }

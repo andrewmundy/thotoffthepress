@@ -21,7 +21,9 @@ export async function GET() {
       urlToImage: newsArticles.articles[0].urlToImage,
       publishedAt: newsArticles.articles[0].publishedAt,
       content:
-        newsArticles.articles[0].content || newsArticles.articles[0].title,
+        newsArticles.articles[0].content ||
+        newsArticles.articles[0].description ||
+        newsArticles.articles[0].title,
     };
 
     const gptArticleContent = await openai.chat.completions.create({

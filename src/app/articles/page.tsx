@@ -1,45 +1,54 @@
 import { sql } from '@vercel/postgres';
+import Link from 'next/link';
 import React from 'react';
 
-interface Article {
-  id: number;
-  title: string;
-  article: string;
-  url: string;
-  urlToImage: string;
-  publishedAt: string;
-  likes: number;
-}
+import { ArticleType } from './[article]/page';
 
-async function fetchArticles(): Promise<Article[]> {
+async function fetchArticles(): Promise<ArticleType[]> {
   const { rows } = await sql`SELECT * FROM articles`;
-  return rows.map((row) => ({
+
+  return rows.reverse().map((row) => ({
     id: row.id,
     title: row.title,
     article: row.article,
     url: row.url,
-    urlToImage: row.urlToImage ?? '',
+    urlToImage: row.urltoimage ?? '',
     publishedAt: row.publishedat,
     likes: row.likes,
   }));
 }
 
-const Articles: React.FC<{ articles: Article[] }> = ({ articles }) => {
-  return (
-    <div>
-      {articles.map(({ title, article, id }) => (
-        <div key={id}>
-          <h2>{title}</h2>
-          <p>{article}</p>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 const Page = async () => {
   const articles = await fetchArticles();
-  return <Articles articles={articles} />;
+  return (
+    <div>
+      <div className='articles'>
+        <div className='articles-heading'>
+          <h1 className='articles-heading-title'>💦 Thot off the press 🥵</h1>
+          <span className='articles-heading-subtitle'>
+            breaking news, but really really dumb
+          </span>
+        </div>
+        {articles.map(({ id, title, publishedAt }, i) => {
+          const published = new Date(publishedAt).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+          });
+          return (
+            <Link className='articles-box' key={i} href={`/articles/${id}`}>
+              <span className='articles-box--time'>{published}</span>
+              <div className='articles-box--article'>{title}</div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 export default Page;

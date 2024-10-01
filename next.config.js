@@ -3,22 +3,18 @@ const nextConfig = {
   eslint: {
     dirs: ['src'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/articles',
+        permanent: true, // Use `true` for permanent redirect (301), `false` for temporary redirect (302)
+      },
+    ];
+  },
 
   reactStrictMode: true,
   swcMinify: true,
-
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'www.washingtonpost.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com',
-      },
-    ],
-  },
 
   webpack(config) {
     // Grab the existing rule that handles SVG imports

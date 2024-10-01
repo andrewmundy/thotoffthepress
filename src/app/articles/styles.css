@@ -1,0 +1,112 @@
+.articles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  margin: auto;
+}
+
+.articles-heading {
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+.articles-heading-title {
+  font-size: var(--font-xl);
+  font-family: var(--font-family);
+}
+.articles-heading-subtitle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-sm);
+  color: #666;
+}
+
+.articles-box {
+  display: flex;
+  flex-direction: column;
+  color: var(--foreground);
+  padding: 16px;
+  gap: 8px;
+  width: 100%;
+}
+
+.articles-box--time {
+  font-size: var(--font-sm);
+  font-style: italic;
+  color: #666;
+}
+
+.articles-box--article {
+  font-size: var(--font-lg);
+}
+
+.article {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-family);
+  padding: 16px;
+}
+
+.article-header {
+  margin-bottom: 24px;
+}
+.article-content {
+  font-size: var(--font-lg);
+}
+.article-header-title {
+  font-family: var(--font-family);
+  font-size: var(--font-xl);
+  font-style: italic;
+}
+.article-header-subtitle {
+  align-self: flex-start;
+  font-size: var(--font-sm);
+  color: #666;
+}
+.article-footer {
+  margin-top: 2rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-lg);
+  color: #0070f3;
+}
+.back-button {
+  width: 100%;
+  font-size: var(--font-sm);
+  align-self: flex-start;
+  text-decoration: underline;
+  margin-bottom: 16px;
+}
+
+.copy-button {
+  border: solid 1px var(--foreground);
+  font-size: var(--font-sm);
+  padding: 0rem 1rem;
+  border-radius: 5px;
+  color: var(--foreground);
+}
+
+/* media query phone size */
+@media (max-width: 500px) {
+  .article-header-title {
+    font-size: var(--font-lg);
+    line-height: 1.7;
+  }
+  .article-content {
+    font-size: var(--font-md);
+    line-height: normal;
+    width: 100%;
+  }
+  .copy-button {
+    font-size: var(--font-sm);
+    padding: 0rem 0.5rem;
+  }
+  .article-footer {
+    font-size: var(--font-sm);
+  }
+}
