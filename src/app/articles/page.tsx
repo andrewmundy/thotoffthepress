@@ -4,7 +4,24 @@ import React from 'react';
 
 import { ArticleType } from './[article]/page';
 
+const baseUrl =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : process.env.VERCEL_DOMAIN;
+
 async function fetchArticles(): Promise<ArticleType[]> {
+  try {
+    await fetch(`${baseUrl}/api/article`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to fetch articles', error);
+  }
+
   const { rows } = await sql`SELECT * FROM articles`;
 
   return rows.reverse().map((row) => ({

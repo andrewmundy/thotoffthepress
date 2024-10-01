@@ -8,12 +8,20 @@ const articlePrompt = process.env.GPT_PROMPT || '';
 const titlePrompt = `${
   process.env.GPT_TITLE_PROMPT || ''
 }. Please keep this title short, max 100 chars.`;
+const ARTICLE_FETCH_ERROR = '[Removed]';
+
 export async function GET() {
   try {
     const newsArticles = await fetch(
       `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.NEWS_API_KEY}`
     ).then((res) => res.json());
 
+    if (newsArticles.articles[0].title === ARTICLE_FETCH_ERROR) {
+      return NextResponse.json(
+        { message: 'Article not found' },
+        { status: 404 }
+      );
+    }
     const newsArticle = {
       title: newsArticles.articles[0].title,
       description: newsArticles.articles[0].description,
@@ -21,24 +29,22 @@ export async function GET() {
       urlToImage: newsArticles.articles[0].urlToImage,
       publishedAt: newsArticles.articles[0].publishedAt,
       content:
-        newsArticles.articles[0].content ||
-        newsArticles.articles[0].description ||
-        newsArticles.articles[0].title,
+        newsArticles.articles[0].description || newsArticles.articles[0].title,
     };
 
     const gptArticleContent = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'chatgpt-4o-latest',
       messages: [
         { role: 'system', content: articlePrompt },
         {
           role: 'user',
-          content: newsArticle.content.split('...')[0],
+          content: newsArticle.content,
         },
       ],
     });
 
     const gptArticleTitle = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'chatgpt-4o-latest',
       messages: [
         { role: 'system', content: titlePrompt },
         {
@@ -72,11 +78,7 @@ export async function GET() {
       LIMIT 1;
     `;
 
-    if (
-      existingArticles.length === 0 &&
-      final.url !== 'https://removed.com' &&
-      !final.article?.includes("I'm sorry, I can't assist")
-    ) {
+    if (existingArticles.length === 0 && final.url !== 'https://removed.com') {
       await client.sql`
               INSERT INTO articles (article, url, publishedAt, urlToImage, likes, title)
               VALUES (${article}, ${url}, ${new Date(
