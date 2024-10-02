@@ -63,11 +63,6 @@ export default function Page() {
     setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
   };
 
-  // const toggleTheme = () => {
-  //   const newTheme = !isDarkMode;
-  //   setIsDarkMode(newTheme);
-  // };
-
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark');
