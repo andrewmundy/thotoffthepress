@@ -39,6 +39,9 @@ export default function RenderArticles() {
       headers: {
         'Content-Type': 'application/json',
       },
+      next: {
+        revalidate: 60,
+      },
     })
       .then((response) => {
         if (!response.ok) {
