@@ -16,11 +16,6 @@ export type ApiArticleType = {
   likes: number;
 };
 
-const baseUrl =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000'
-    : process.env.VERCEL_DOMAIN;
-
 export function convertToTimestamp(time: string | number | Date) {
   return new Date(time).toLocaleString('en-US', {
     year: 'numeric',
@@ -39,7 +34,7 @@ export default function RenderArticles() {
   const [error, setError] = useState<Error | null>(null);
 
   const fetchArticles = () => {
-    return fetch(`${baseUrl}/api/articles`, {
+    return fetch(`api/articles`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
