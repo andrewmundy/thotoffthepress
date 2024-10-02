@@ -4,6 +4,8 @@ import React from 'react';
 
 import CopyButton from '../../components/CopyButton';
 
+export const dynamic = 'force-dynamic';
+
 // Define the type for the article
 export interface ArticleType {
   id: string;
