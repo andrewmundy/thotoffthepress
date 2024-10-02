@@ -2,6 +2,8 @@ import React from 'react';
 
 import RenderArticles from './renderArticles';
 
+export const dynamic = 'force-dynamic';
+
 const Page = async () => {
   return (
     <div>

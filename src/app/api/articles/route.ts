@@ -2,6 +2,8 @@ import { db } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+export const dynamic = 'force-dynamic';
+
 const client = await db.connect();
 const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY });
 const articlePrompt = process.env.GPT_PROMPT || '';
