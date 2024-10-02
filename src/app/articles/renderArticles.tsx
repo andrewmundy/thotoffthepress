@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { ArticleType } from './[article]/page';
 import Loader from '../../components/Loader';
 
+export const dynamic = 'force-dynamic';
+
 export type ApiArticleType = {
   id: string;
   title: string;
@@ -28,13 +30,18 @@ export function convertToTimestamp(time: string | number | Date) {
   });
 }
 
+const API_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'api/articles'
+    : 'http://localhost:3000/api/articles';
+
 export default function RenderArticles() {
   const [articles, setArticles] = useState<ArticleType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchArticles = () => {
-    return fetch(`api/articles`, {
+    return fetch(API_URL, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
