@@ -6,7 +6,7 @@ import CopyButton from '../../components/CopyButton';
 
 // Define the type for the article
 export interface ArticleType {
-  id: number;
+  id: string;
   title: string;
   article: string;
   url: string;
